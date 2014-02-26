@@ -15,6 +15,8 @@ struct RPNElement {
   };
 };
 
+struct RPNElement formRPNElement(char charBuffer[], bool isNumber);
+
 void main() {
 
     static const float PI = 3.14159265359;
@@ -22,7 +24,8 @@ void main() {
 
     char input[] = " ";
     int i;
-    char charBuffer[] = "";
+    char charBuffer[15];
+    char charBuffer2[15];
     int charBufferLast = 0;
     
     struct RPNElement tmpStack[20], RPNStack[40];
@@ -40,16 +43,17 @@ void main() {
                 break;
             case 'I':
                 if (charBuffer[0] == 'P') {
-                    strcpy(RPNStack[RPNStackIndex++],"PI");
+                    //strcpy(charBuffer2, (sprintf("%f", PI));
+                    RPNStack[RPNStackIndex++] = formRPNElement( sprintf("%1.11f", PI)/*charBuffer2*/, true);
                     charBufferLast = 0;
                 } else {
                     //error
                 }
                 break;
             case 'E':
-                strcpy(RPNStack[RPNStackIndex++],"E");
-            charBufferLast = 0;
-                    break;
+                RPNStack[RPNStackIndex++] = formRPNElement( sprintf("%1.11f", E), true);
+                charBufferLast = 0;
+                break;
             case '1':
             case '2':
             case '3':
@@ -64,7 +68,7 @@ void main() {
                     //just keep in stack
                 } else {
                     charBuffer[charBufferLast] = '\0';
-                    strcpy(RPNStack[RPNStackIndex++],charBuffer);
+                    RPNStack[RPNStackIndex++] = formRPNElement(charBuffer, true);
                     charBufferLast = 0;
                 }
                 break;
@@ -75,7 +79,7 @@ void main() {
                 break;
             case '+':
                 if (tmpStackIndex == 0) {
-                    strcpy(RPNStack[RPNStackIndex++],"+");
+                    RPNStack[RPNStackIndex++] = formRPNElement("+" , false);
                     charBufferLast = 0;
                 } else {
                     flag = true;
@@ -86,26 +90,26 @@ void main() {
                             case '*':
                             case '/':
                                 flag = false;
-                                strcpy(RPNStack[RPNStackIndex++],tmpStack[tmpStackIndex--]);
+                                RPNStack[RPNStackIndex++] = tmpStack[tmpStackIndex--];
                                 break;
                             case '(':
                                 flag = true;
-                                strcpy(RPNStack[RPNStackIndex++],"+");
+                                RPNStack[RPNStackIndex++] = formRPNElement("+" , false);
                                 charBufferLast = 0;
                         }
                     } while (!flag);
                 }
                 break;
             case '*':
-                strcpy(RPNStack[RPNStackIndex++],"*");
+                RPNStack[RPNStackIndex++] = formRPNElement("*" , false);
                 charBufferLast = 0;
                 break;
             case '-':
-                strcpy(RPNStack[RPNStackIndex++],"-");
+                RPNStack[RPNStackIndex++] = formRPNElement("-" , false);
                 charBufferLast = 0;
                 break;
             case '/':
-                strcpy(RPNStack[RPNStackIndex++],"/");
+                RPNStack[RPNStackIndex++] = formRPNElement("/" , false);
                 charBufferLast = 0;
                 break;
             default:
@@ -116,7 +120,11 @@ void main() {
     }
     printf("\n");
     for (i = 0; i < RPNStackIndex; i++) {
-        printf("%s\n",RPNStack[i]);
+        if (RPNStack[i].isNumericFlag == true) {
+            printf("%f\n",RPNStack[i].f);
+        } else {
+            printf("%s\n",RPNStack[i].ch);
+        }
     }
 }
 
