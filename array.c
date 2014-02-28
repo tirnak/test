@@ -18,12 +18,12 @@ struct RPNElement {
 struct RPNElement formRPNElementNum(float num);
 struct RPNElement formRPNElementOp(char charBuffer[]);
 
-void main() {
+int main() {
 
     static const float PI = 3.14159265359;
     static const float E = 2.71828182846;
 
-    char input[] = " ";
+    char input[50];
     int i;
     char charBuffer[15];
     int charBufferLast = 0;
@@ -33,25 +33,43 @@ void main() {
 
     bool flag;
 
-    fgets(input, 255, stdin);
+    //fgets(input, 50, stdin);
+    scanf("%s", input);
 
     // parse input from infix
-    for (i = 0; i<(strlen(input)-1); i++) {
+    for (i = 0; i < strlen(input); i++) {
         charBuffer[charBufferLast] = input[i];
-        switch (charBuffer[charBufferLast++]) {
-            case 'P':
-                break;
-            case 'I':
-                if (charBuffer[0] == 'P') {
-                    RPNStack[RPNStackIndex++] = formRPNElementNum(PI);
-                    charBufferLast = 0;
-                } else {
+        switch (charBuffer[charBufferLast]) {
+            case 'e':
+                if (input[i+1] != 'x' || input[i+2] != 'p') {
                     //error
                 }
+                tmpStack[++tmpStackIndex] = formRPNElementOp("exp");
+                i = i+2;
+                break;
+            case 's':
+                if (input[i+1] != 'i' || input[i+2] != 'n') {
+                    //error
+                }
+                tmpStack[++tmpStackIndex] = formRPNElementOp("sin");
+                i = i+2;
+                break;
+            case 'c':
+                if (input[i+1] != 'o' || input[i+2] != 's') {
+                    //error
+                }
+                tmpStack[++tmpStackIndex] = formRPNElementOp("cos");
+                i = i+2;
+                break;
+            case 'P':
+                if (input[i+1] != 'I') {
+                    //error
+                }
+                RPNStack[++RPNStackIndex] = formRPNElementNum(PI);
+                i++;
                 break;
             case 'E':
-                RPNStack[RPNStackIndex++] = formRPNElementNum(E);
-                charBufferLast = 0;
+                RPNStack[++RPNStackIndex] = formRPNElementNum(E);
                 break;
             case '1':
             case '2':
@@ -64,10 +82,10 @@ void main() {
             case '9':
             case '0':
                 if (isdigit(input[i+1]) || input[i+1] == '.') {
-                    //just keep in stack
+                    charBufferLast++;
                 } else {
-                    charBuffer[charBufferLast] = '\0';
-                    RPNStack[RPNStackIndex++] = formRPNElementNum(atof(charBuffer));
+                    charBuffer[++charBufferLast] = '\0';
+                    RPNStack[++RPNStackIndex] = formRPNElementNum(atof(charBuffer));
                     charBufferLast = 0;
                 }
                 break;
@@ -75,12 +93,13 @@ void main() {
                 if (!isdigit(input[i+1])) {
                     //error
                 }
+                charBufferLast++;
                 break;
             case '+':
                 do {
                     flag = false;
                     if (tmpStackIndex == 0 || tmpStack[tmpStackIndex].ch[0] == '(' ) {
-                        tmpStack[tmpStackIndex++] = formRPNElementOp("+");
+                        tmpStack[++tmpStackIndex] = formRPNElementOp("+");
                         charBufferLast = 0;
                         flag = true;
                     } else {
@@ -89,31 +108,75 @@ void main() {
                             case '-':
                             case '*':
                             case '/':
-                                RPNStack[RPNStackIndex++] = tmpStack[tmpStackIndex--];
+                                RPNStack[++RPNStackIndex] = tmpStack[tmpStackIndex--];
+                                break;
+                        }
+                    } /* endif */
+                } while (!flag);
+                break;
+            case '-':
+                do {
+                    flag = false;
+                    if (tmpStackIndex == 0 || tmpStack[tmpStackIndex].ch[0] == '(' ) {
+                        tmpStack[++tmpStackIndex] = formRPNElementOp("-");
+                        charBufferLast = 0;
+                        flag = true;
+                    } else {
+                        switch(tmpStack[tmpStackIndex].ch[0])    {
+                            case '+':
+                            case '-':
+                            case '*':
+                            case '/':
+                                RPNStack[++RPNStackIndex] = tmpStack[tmpStackIndex--];
                                 break;
                         }
                     } /* endif */
                 } while (!flag);
                 break;
             case '*':
-                RPNStack[RPNStackIndex++] = formRPNElement("*" , false);
-                charBufferLast = 0;
-                break;
-            case '-':
-                RPNStack[RPNStackIndex++] = formRPNElement("-" , false);
-                charBufferLast = 0;
+                while (tmpStack[tmpStackIndex].ch[0] == '*' || tmpStack[tmpStackIndex].ch[0] == '/') {
+                    RPNStack[++RPNStackIndex] = tmpStack[tmpStackIndex--];
+                }
+                tmpStack[++tmpStackIndex] = formRPNElementOp("*");
                 break;
             case '/':
-                RPNStack[RPNStackIndex++] = formRPNElement("/" , false);
-                charBufferLast = 0;
+                while (tmpStack[tmpStackIndex].ch[0] == '*' || tmpStack[tmpStackIndex].ch[0] == '/') {
+                    RPNStack[++RPNStackIndex] = tmpStack[tmpStackIndex--];
+                }
+                tmpStack[++tmpStackIndex] = formRPNElementOp("/");
+                break;
+            case '(':
+                tmpStack[++tmpStackIndex] = formRPNElementOp("(");
+                break;
+            case ')':
+                while (tmpStack[tmpStackIndex].ch[0] != '(' || tmpStackIndex == 0) {
+                    RPNStack[++RPNStackIndex] = tmpStack[tmpStackIndex--];
+                }
+                if (tmpStack[tmpStackIndex].ch[0] == '(') {
+                    tmpStackIndex--;
+                }
+                if (tmpStackIndex == 0) {
+                    //error
+                }
+                if (strcmp(tmpStack[tmpStackIndex].ch,"sin") == 0 ||
+                    strcmp(tmpStack[tmpStackIndex].ch,"cos") == 0 ||
+                    strcmp(tmpStack[tmpStackIndex].ch,"exp") == 0 ) {
+
+                    RPNStack[++RPNStackIndex] = tmpStack[tmpStackIndex--];
+                }
+                break;
+            case ' ':
                 break;
             default:
-                charBufferLast = 0;
+                //error
                 break;
         }
     }
+    while (tmpStackIndex != 0) {
+        RPNStack[++RPNStackIndex] = tmpStack[tmpStackIndex--];
+    }
     printf("\n");
-    for (i = 0; i < RPNStackIndex; i++) {
+    for (i = 1; i < RPNStackIndex + 1; i++) {
         if (RPNStack[i].isNumericFlag == true) {
             printf("%f\n",RPNStack[i].f);
         } else {
