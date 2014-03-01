@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
+#include <string.h>
 
 typedef enum {
   false, true
