@@ -15,6 +15,7 @@ struct RPNElement {
   };
 };
 
+int parseIntoRPN(char input[], struct RPNElement *RPNStackPointer);
 struct RPNElement formRPNElementNum(float num);
 struct RPNElement formRPNElementOp(char charBuffer[]);
 
@@ -37,6 +38,29 @@ int main() {
     scanf("%s", input);
 
     // parse input from infix
+    RPNStackIndex = parseIntoRPN(input, &RPNStack);
+
+    printf("\n");
+    for (i = 1; i < RPNStackIndex + 1; i++) {
+        if (RPNStack[i].isNumericFlag == true) {
+            printf("%f\n",RPNStack[i].f);
+        } else {
+            printf("%s\n",RPNStack[i].ch);
+        }
+    }
+}
+
+// returns RPNStackIndex
+int parseIntoRPN(char input[], struct RPNElement *RPNStack) {
+    int i;
+    char charBuffer[15];
+    int charBufferLast = 0;
+
+    struct RPNElement tmpStack[20];
+    int tmpStackIndex = 0, RPNStackIndex = 0;
+
+    bool flag;
+
     for (i = 0; i < strlen(input); i++) {
         charBuffer[charBufferLast] = input[i];
         switch (charBuffer[charBufferLast]) {
@@ -175,17 +199,10 @@ int main() {
     while (tmpStackIndex != 0) {
         RPNStack[++RPNStackIndex] = tmpStack[tmpStackIndex--];
     }
-    printf("\n");
-    for (i = 1; i < RPNStackIndex + 1; i++) {
-        if (RPNStack[i].isNumericFlag == true) {
-            printf("%f\n",RPNStack[i].f);
-        } else {
-            printf("%s\n",RPNStack[i].ch);
-        }
-    }
+
+    return RPNStackIndex;
+
 }
-
-
 
 struct RPNElement formRPNElementOp(char charBuffer[])
 {
