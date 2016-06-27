@@ -1,32 +1,59 @@
 #include <sys/types.h>
-#include <sys/msg.h>
 #include <sys/ipc.h>
-#include <string.h>
+#include <sys/stat.h>
+#include <sys/msg.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
 
-int main (void) {
+const char* sysV_key_path = "/tmp/msg.temp";
+const char* out_message_path = "/home/ax2/mtprog/msg_queue_sysv/message.txt";
 
-        struct { long type; char text[80]; } message;
-        int received;
+struct message {
+    long mtype;
+    char mtext[80];
+};
 
-        /* Generate the ipc key */
-        key_t key = ftok("/tmp/msg.temp", 1);
-        printf("My key is %d\n", key);
+int main()
+{
+	int key_res = creat( sysV_key_path, 0666  );
+	if( key_res == -1 ) {
+		printf( "Error. creat temp\n" );
+		return -1;
+	}
 
-        /* Set up the message queue */
-        // int mq_id = msgget(ipckey, 0);
-		int mq_id = msgget(key, IPC_CREAT|0666);
-        printf("Message identifier is %d\n", mq_id);
-        
-        if (mq_id == -1) {
-        	printf("error: %s", strerror(errno));
-        }
-        
+	key_t key = ftok( sysV_key_path	, 1 );
 
-        received = msgrcv(mq_id, &message, 80, 0, 0);
-		
-		FILE *f = fopen("/home/box/message.txt", "w");
+	int msgqid = msgget( key, IPC_CREAT | 0666 );
+	if( msgqid == -1 ) {
+		printf( "Error. cant get message queue: %d\n", errno );
+		return -1;
+	}
 
-        fprintf(f, "%s\n", message.text);
+	struct message msg;
+
+	size_t len = msgrcv( msgqid, &msg, 80, 0, 0 );
+	if( len == -1 ) {
+		printf( "Error. cant receive message: %d\n", errno );
+			
+		return -1;
+	}
+	
+	int out_file = open( out_message_path, O_CREAT | O_WRONLY | O_TRUNC );
+	if( out_file == -1 ) {
+		printf( "Error. open out file\n" );
+		return -1;
+	}
+
+	size_t writen = write( out_file, msg.mtext, len );
+	if( writen < len ) {
+		printf( "Error. write out file\n" );
+		return -1;
+	}
+
+	msgctl( msgqid, IPC_RMID, 0 );
+	unlink( sysV_key_path );	
+	
+	return 0;
 }
