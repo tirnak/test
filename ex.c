@@ -3,6 +3,7 @@
 #include <sys/ipc.h>
 #include <string.h>
 #include <stdio.h>
+#include <errno.h>
 
 int main (void) {
 
@@ -17,6 +18,8 @@ int main (void) {
         // int mq_id = msgget(ipckey, 0);
 		int mq_id = msgget(key, 0);
         printf("Message identifier is %d\n", mq_id);
+        
+        printf("omething went wrong! %s\n", strerror(errno));
 
         received = msgrcv(mq_id, &message, sizeof(message), 0, 0);
 		
