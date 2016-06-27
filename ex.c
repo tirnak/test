@@ -8,7 +8,7 @@
 #include <errno.h>
 
 const char* sysV_key_path = "/tmp/msg.temp";
-const char* out_message_path = "/home/ax2/mtprog/msg_queue_sysv/message.txt";
+const char* out_message_path = "/home/box/message.txt";
 
 struct message {
     long mtype;
