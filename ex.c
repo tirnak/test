@@ -28,5 +28,5 @@ int main (void) {
 		
 		FILE *f = fopen("/home/box/message.txt", "w");
 
-        fprintf(f, "%s", message.text);
+        fprintf(f, "%s\n", message.text);
 }
