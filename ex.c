@@ -15,7 +15,7 @@ int main (void) {
 
         /* Set up the message queue */
         // int mq_id = msgget(ipckey, 0);
-		int mq_id = msgget(ipckey, 0);
+		int mq_id = msgget(key, 0);
         printf("Message identifier is %d\n", mq_id);
 
         received = msgrcv(mq_id, &message, sizeof(message), 0, 0);
