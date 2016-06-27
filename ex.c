@@ -24,7 +24,7 @@ int main (void) {
         }
         
 
-        received = msgrcv(mq_id, &message, sizeof(message), 0, 0);
+        received = msgrcv(mq_id, &message, 80, 0, 0);
 		
 		FILE *f = fopen("/home/box/message.txt", "w");
 
