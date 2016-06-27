@@ -16,7 +16,7 @@ int main (void) {
 
         /* Set up the message queue */
         // int mq_id = msgget(ipckey, 0);
-		int mq_id = msgget(key, IPC_CREAT|IPC_EXCL|0666);
+		int mq_id = msgget(key, IPC_CREAT|0666);
         printf("Message identifier is %d\n", mq_id);
         
         if (mq_id == -1) {
