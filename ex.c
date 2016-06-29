@@ -21,8 +21,9 @@ int main()
 	key_t key = ftok("/tmp/sem.temp", 1);
 	int sem_d = semget(key, 16, 0666 | IPC_CREAT);
 	check(sem_d, "semd");
+	int i;
 	
-	for (int i = 0; i < 17; ++i) {
+	for (i = 0; i < 17; ++i) {
         	check(semctl( sem_d, i, SETVAL, i), "somewhere in semctl");
 	}
         
