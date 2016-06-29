@@ -15,7 +15,7 @@ int main()
 	attr.mq_maxmsg = 10;
 	attr.mq_msgsize = MAX_SIZE;
 	attr.mq_curmsgs = 0;
-	printf("mq_msgsize is %s", attr.mq_msgsize);
+	printf("mq_msgsize is %ld", attr.mq_msgsize);
 	
 	mqd_t mq = mq_open("/test.mq", O_CREAT | O_RDWR, 0666, &attr);
 	if( mq == -1 ) {
