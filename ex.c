@@ -22,10 +22,8 @@ int main()
 	int sem_d = semget(key, 16, 0666 | IPC_CREAT);
 	check(sem_d, "semd");
 	
-	union semun semopts;    
 	for (int i = 0; i < 17; ++i) {
-		semopts.val = i;
-        	check(semctl( sid, semnum, SETVAL, semopts)	);
+        	check(semctl( sem_d, i, SETVAL, i), "somewhere in semctl");
 	}
         
 	
