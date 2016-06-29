@@ -1,4 +1,5 @@
 #include <mqueue.h>     /* message queue stuff */
+#include <sys/stat.h>  
 #include <errno.h>      /* errno and perror */
 #include <fcntl.h>      /* O_RDONLY */
 #include <stdio.h>
@@ -20,7 +21,7 @@ int main()
 		return -1;
 	}
 	memset(buffer, 0, MAX_SIZE);
-	int received = msg_receive(mq, buffer, MAX_SIZE, 0);
+	int received = mq_receive(mq, buffer, MAX_SIZE, 0);
 	if( received == -1 ) {
 		printf("error: %s", strerror(errno));
 		return -1;
