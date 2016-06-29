@@ -21,7 +21,7 @@ int main()
 		return -1;
 	}
 	memset(buffer, 0, MAX_SIZE);
-	int received = mq_receive(mq, buffer, MAX_SIZE, 0);
+	int received = mq_receive(mq, buffer, MAX_SIZE + 1, 0);
 	if( received == -1 ) {
 		printf("receive. error: %s", strerror(errno));
 		return -1;
