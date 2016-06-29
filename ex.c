@@ -7,7 +7,7 @@
 #define MAX_SIZE 80
 
 struct mq_attr attr;
-char buffer[MAX_SIZE];
+char buffer[MAX_SIZE+1];
 
 int main()
 {
@@ -15,7 +15,7 @@ int main()
 	attr.mq_maxmsg = 10;
 	attr.mq_msgsize = MAX_SIZE;
 	attr.mq_curmsgs = 0;
-	mqd_t mq = mq_open("/test.mq", O_CREAT | O_RDWR, 0666);
+	mqd_t mq = mq_open("/test.mq", O_CREAT | O_RDWR, 0666, &attr);
 	if( mq == -1 ) {
 		printf("mq. error: %s", strerror(errno));
 		return -1;
