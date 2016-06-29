@@ -26,7 +26,7 @@ int main()
 	check(sem_d, "semd");
 	int i;
 	
-	for (i = 0; i < 17; ++i) {
+	for (i = 0; i < 16; ++i) {
 		printf("%d", i);
         	check(semctl( sem_d, i, SETVAL, i), "somewhere in semctl");
 	}
