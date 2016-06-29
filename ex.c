@@ -12,7 +12,7 @@ void check(int toCheck, char* msg) {
 		printf("%s\n", strerror(errno));
 	}
 	if (1) {
-		printf("%d: ", msg, toCheck);
+		printf("%s: %d", msg, toCheck);
 	}
 }
 void clearBuf(char* buf) {
