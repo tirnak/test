@@ -13,7 +13,7 @@ int main()
 	attr.mq_maxmsg = 10;
 	attr.mq_msgsize = MAX_SIZE;
 	attr.mq_curmsgs = 0;
-	mqd_t mq = mq_open("/test.mq", O_CREAT | O_RDWR, 0666,);
+	mqd_t mq = mq_open("/test.mq", O_CREAT | O_RDWR, 0666);
 	if( mq == -1 ) {
 		printf("error: %s", strerror(errno));
 		return -1;
@@ -25,7 +25,7 @@ int main()
 		return -1;
 	}
 	
-	FILE *fd = open(/home/box/message.txt", O_TRUNC | O_WRONLY);
+	FILE *fd = fopen("/home/box/message.txt", O_TRUNC | O_WRONLY);
 	if( fd == -1 ) {
 		printf("error: %s", strerror(errno));
 		return -1;
