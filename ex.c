@@ -6,54 +6,41 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
+#define MAX_SIZE 80
 
-const char* sysV_key_path = "/tmp/msg.temp";
-const char* out_message_path = "/home/box/message.txt";
+struct mq_attr attr;
 
-struct message {
-    long mtype;
-    char mtext[80];
-};
+
+
+attr.mq_flags = 0;
+attr.mq_maxmsg = 10;
+attr.mq_msgsize = MAX_SIZE;
+attr.mq_curmsgs = 0;
+
+char buffer[MAX_SIZE];
 
 int main()
 {
-	int key_res = creat( sysV_key_path, 0666  );
-	if( key_res == -1 ) {
-		printf( "Error. creat temp\n" );
+	
+	mqd_t mq = mq_open("/test.mq", O_CREAT | O_RDWR, 0666,);
+	if( mq == -1 ) {
+		printf("error: %s", strerror(errno));
 		return -1;
 	}
-
-	key_t key = ftok( sysV_key_path	, 1 );
-
-	int msgqid = msgget( key, IPC_CREAT | 0666 );
-	if( msgqid == -1 ) {
-		printf( "Error. cant get message queue: %d\n", errno );
-		return -1;
-	}
-
-	struct message msg;
-
-	size_t len = msgrcv( msgqid, &msg, 80, 0, 0 );
-	if( len == -1 ) {
-		printf( "Error. cant receive message: %d\n", errno );
-			
+	memset(buffer, 0, MAX_SIZE);
+	int received = msg_receive(mq, buffer, MAX_SIZE, 0);
+	if( received == -1 ) {
+		printf("error: %s", strerror(errno));
 		return -1;
 	}
 	
-	int out_file = open( out_message_path, O_CREAT | O_WRONLY | O_TRUNC );
-	if( out_file == -1 ) {
-		printf( "Error. open out file\n" );
+	FILE *fd = open(/home/box/message.txt", O_TRUNC | O_WRONLY);
+	if( fd == -1 ) {
+		printf("error: %s", strerror(errno));
 		return -1;
 	}
-
-	size_t writen = write( out_file, msg.mtext, len );
-	if( writen < len ) {
-		printf( "Error. write out file\n" );
-		return -1;
-	}
-
-	msgctl( msgqid, IPC_RMID, 0 );
-	unlink( sysV_key_path );	
+	printf("message is:\n%s", buffer);
+	fprintf(fd, "%s", buffer);
 	
 	return 0;
 }
