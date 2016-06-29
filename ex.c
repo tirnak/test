@@ -2,6 +2,7 @@
 #include <errno.h>      /* errno and perror */
 #include <fcntl.h>      /* O_RDONLY */
 #include <stdio.h>
+#include <string.h>
 #define MAX_SIZE 80
 
 struct mq_attr attr;
@@ -25,7 +26,7 @@ int main()
 		return -1;
 	}
 	
-	FILE *fd = fopen("/home/box/message.txt", O_TRUNC | O_WRONLY);
+	FILE *fd = fopen("/home/box/message.txt", "w+");
 	if( fd == -1 ) {
 		printf("error: %s", strerror(errno));
 		return -1;
