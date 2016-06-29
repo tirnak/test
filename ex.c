@@ -1,42 +1,33 @@
-#include <mqueue.h>     /* message queue stuff */
-#include <sys/stat.h>  
-#include <errno.h>      /* errno and perror */
-#include <fcntl.h>      /* O_RDONLY */
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#define MAX_SIZE 80
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#define MSQ_SIZE 100
 
-struct mq_attr attr;
-char buffer[MAX_SIZE+1];
+void check(int toCheck, char* msg) {
+	if (toCheck == -1) {
+		printf("%s\n", msg);
+		printf("%s\n", strerror(errno));
+	}
+}
+void clearBuf(char* buf) {
+	memset(buf, 0, sizeof(buf));
+}
 
 int main()
 {
-	attr.mq_flags = 0;
-	attr.mq_maxmsg = 10;
-	attr.mq_msgsize = MAX_SIZE;
-	attr.mq_curmsgs = 0;
-	printf("mq_msgsize is %ld", attr.mq_msgsize);
+	key_t key = ftok("/tmp/sem.temp", 1);
+	int sem_d = semget(key, 16, 0666 | IPC_CREAT);
+	check(sem_d, "semd");
 	
-	mqd_t mq = mq_open("/test.mq", O_CREAT | O_RDWR, 0666, &attr);
-	if( mq == -1 ) {
-		printf("mq. error: %s", strerror(errno));
-		return -1;
+	union semun semopts;    
+	for (int i = 0; i < 17; ++i) {
+		semopts.val = i;
+        	check(semctl( sid, semnum, SETVAL, semopts)	);
 	}
-	memset(buffer, 0, MAX_SIZE+1);
-	printf("buffer is %s", buffer);
-	int received = mq_receive(mq, buffer, MAX_SIZE + 1, NULL);
-	if( received == -1 ) {
-		printf("receive. error: %s", strerror(errno));
-		return -1;
-	}
-	
-	FILE *fd = fopen("/home/box/message.txt", "w+");
-	if( fd == -1 ) {
-		printf("fopen. error: %s", strerror(errno));
-		return -1;
-	}
-	printf("message is:\n%s", buffer);
-	fprintf(fd, "%s", buffer);
+        
 	
 	return 0;
 }
