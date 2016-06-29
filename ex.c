@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
+#include <mqueue.h>
 #define MAX_SIZE 80
 
 struct mq_attr attr;
