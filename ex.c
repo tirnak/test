@@ -22,7 +22,7 @@ int main()
 {
 	sem_t *sem;
 	sem_unlink("/test.sem");
-	sem = sem_open("/test.sem", O_CREAT, 0666, 0);
+	sem = sem_open("/test.sem", O_CREAT, 0666, 66);
 	
 	return 0;
 }
