@@ -1,9 +1,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/sem.h>
+#include <sys/stat.h>
+#include <semaphore.h>
 #define MSQ_SIZE 100
 
 void check(int toCheck, char* msg) {
@@ -12,7 +11,7 @@ void check(int toCheck, char* msg) {
 		printf("%s\n", strerror(errno));
 	}
 	if (1) {
-		printf("%s: %d", msg, toCheck);
+		printf("debug. %s: %d\n", msg, toCheck);
 	}
 }
 void clearBuf(char* buf) {
@@ -21,16 +20,9 @@ void clearBuf(char* buf) {
 
 int main()
 {
-	key_t key = ftok("/tmp/sem.temp", 1);
-	int sem_d = semget(key, 16, 0666 | IPC_CREAT);
-	check(sem_d, "semd");
-	int i;
-	
-	for (i = 0; i < 16; ++i) {
-		printf("%d", i);
-        	check(semctl( sem_d, i, SETVAL, i), "somewhere in semctl");
-	}
-        
+	sem_t *sem;
+	sem_unlink("/test.sem");
+	sem = sem_open("/test.sem", O_CREAT, 0666, 0);
 	
 	return 0;
 }
