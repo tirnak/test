@@ -11,6 +11,9 @@ void check(int toCheck, char* msg) {
 		printf("%s\n", msg);
 		printf("%s\n", strerror(errno));
 	}
+	if (1) {
+		printf("%d: ", msg, toCheck);
+	}
 }
 void clearBuf(char* buf) {
 	memset(buf, 0, sizeof(buf));
@@ -24,6 +27,7 @@ int main()
 	int i;
 	
 	for (i = 0; i < 17; ++i) {
+		printf("%d", i);
         	check(semctl( sem_d, i, SETVAL, i), "somewhere in semctl");
 	}
         
