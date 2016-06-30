@@ -1,10 +1,9 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <semaphore.h>
-#define MSQ_SIZE 100
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 void check(int toCheck, char* msg) {
 	if (toCheck == -1) {
@@ -21,9 +20,15 @@ void clearBuf(char* buf) {
 
 int main()
 {
-	sem_t *sem;
-	sem_unlink("/test.sem");
-	sem = sem_open("/test.sem", O_CREAT, 0666, 66);
-	
-	return 0;
+      int *array;
+      int shmid;
+      int new = 1; 
+      key_t key = ftok("/tmp/mem.temp", 1);
+      check(key, "key");
+      
+      shmid = shmget(key, 1000000, 0666|IPC_CREAT);
+      check(shmid, "shmid");
+      char * shm_addr = shmat( shmid, NULL, 0); 
+      memset(shm_addr, 42, 1000000);
+      return 0;
 }
