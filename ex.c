@@ -1,9 +1,10 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 void check(int toCheck, char* msg) {
 	if (toCheck == -1) {
@@ -20,15 +21,14 @@ void clearBuf(char* buf) {
 
 int main()
 {
-      int *array;
       int shmid;
       int new = 1; 
-      key_t key = ftok("/tmp/mem.temp", 1);
-      check(key, "key");
       
-      shmid = shmget(key, 1048576, 0666|IPC_CREAT);
-      check(shmid, "shmid");
-      char * shm_addr = shmat( shmid, NULL, 0); 
-      memset(shm_addr, 42, 1048576);
+      shmid = shm_open("/test.shm", O_CREAT|O_RDWR, 0666)
+      check(shmid, "key");
+      int trunc = ftruncate(shmid, 1048576);
+      check(trunc, "trunc")
+      char *ptr = mmap(0,1048576, PROT_READ | PROT_WRITE, MAP_SHARED, shmid, 0);
+      memset(ptr, 13, 1048576);
       return 0;
 }
