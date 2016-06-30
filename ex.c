@@ -26,9 +26,9 @@ int main()
       key_t key = ftok("/tmp/mem.temp", 1);
       check(key, "key");
       
-      shmid = shmget(key, 1000000, 0666|IPC_CREAT);
+      shmid = shmget(key, 1048576, 0666|IPC_CREAT);
       check(shmid, "shmid");
       char * shm_addr = shmat( shmid, NULL, 0); 
-      memset(shm_addr, 42, 1000000);
+      memset(shm_addr, 42, 1048576);
       return 0;
 }
