@@ -23,22 +23,22 @@ pthread_mutex_t mutexL;
 pthread_spinlock_t spinlockL;
 pthread_rwlock_t rwlockL;
 
-void mutexTh(void *args) {
+void* mutexTh(void *args) {
     printf("Hello from mutex!\n");
     pthread_mutex_lock(&mutexL);
 }
 
-void spinTh(void *args) {
+void* spinTh(void *args) {
     printf("Hello from spinlock!\n");
-    spin_lock(&spinlockL);
+    pthread_spin_lock(&spinlockL);
 }
 
-void readTh(void *args) {
+void* readTh(void *args) {
     printf("Hello from read!\n");
     pthread_rwlock_rdlock(&rwlockL);
 }
 
-void writeTh(void *args) {
+void* writeTh(void *args) {
     printf("Hello from write!\n");
     pthread_rwlock_wrlock(&rwlockL);
 }
@@ -57,7 +57,7 @@ int main() {
     
     status = pthread_spin_init(&spinlockL, PTHREAD_PROCESS_SHARED); 
     check(status, "spinlock init");
-    spin_lock(&spinlockL);
+    pthread_spin_lock(&spinlockL);
     
     status = pthread_rwlock_init(&rwlockL, NULL);
     check(status, "rwlock init");
