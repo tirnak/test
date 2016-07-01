@@ -19,28 +19,28 @@ void clearBuf(char* buf) {
 	memset(buf, 0, sizeof(buf));
 }
 
-pthread_mutex_t mutex;
-pthread_spinlock_t spinlock;
-pthread_rwlock_t rwlock;
+pthread_mutex_t mutexL;
+pthread_spinlock_t spinlockL;
+pthread_rwlock_t rwlockL;
 
-void mutex(void *args) {
+void mutexTh(void *args) {
     printf("Hello from mutex!\n");
-    pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&mutexL);
 }
 
-void spin(void *args) {
+void spinTh(void *args) {
     printf("Hello from spinlock!\n");
-    spin_lock(&spinlock);
+    spin_lock(&spinlockL);
 }
 
-void read(void *args) {
+void readTh(void *args) {
     printf("Hello from read!\n");
-    pthread_rwlock_rdlock(&rwlock);
+    pthread_rwlock_rdlock(&rwlockL);
 }
 
-void write(void *args) {
+void writeTh(void *args) {
     printf("Hello from write!\n");
-    pthread_rwlock_wrlock(&rwlock);
+    pthread_rwlock_wrlock(&rwlockL);
 }
  
 int main() {
@@ -51,36 +51,37 @@ int main() {
     // check((int) f, "file");
     fprintf(f, "%d\n", getpid());
     
-    status = pthread_mutex_init(&lock, NULL);
+    status = pthread_mutex_init(&mutexL, NULL);
     check(status, "mutex init");
-    pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&mutexL);
     
-    status = pthread_spin_init(&lock, PTHREAD_PROCESS_SHARED); 
+    status = pthread_spin_init(&spinlockL, PTHREAD_PROCESS_SHARED); 
     check(status, "spinlock init");
-    spin_lock(&spinlock);
+    spin_lock(&spinlockL);
     
-    status = pthread_rwlock_init(rwlock, NULL);
+    status = pthread_rwlock_init(&rwlockL, NULL);
     check(status, "rwlock init");
-    status = pthread_rwlock_rdlock(&rwlock);
+    status = pthread_rwlock_rdlock(&rwlockL);
     check(status, "rwlock read lock");
-    status = pthread_rwlock_wrlock(&rwlock);
+    status = pthread_rwlock_wrlock(&rwlockL);
     check(status, "rwlock write lock");
 
     
-    status = pthread_create(&threadMutex, NULL, &mutex, NULL);
+    status = pthread_create(&threadMutex, NULL, &mutexTh, NULL);
     check(status, " create mutex thread");
     
-    status = pthread_create(&threadSpin, NULL, &spin, NULL);
+    status = pthread_create(&threadSpin, NULL, &spinTh, NULL);
     check(status, " create spin thread");
  
-    status = pthread_create(&threadR, NULL, read, NULL);
+    status = pthread_create(&threadR, NULL, readTh, NULL);
     check(status, "create read");
  
-    status = pthread_create(&threadW, NULL, write, NULL);
+    status = pthread_create(&threadW, NULL, writeTh, NULL);
     check(status, "create write");
     
     printf("Hello from main!\n");
  
+    int i;
     std::cin >> i;
     return 0;
 }
