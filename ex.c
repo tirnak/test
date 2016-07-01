@@ -27,7 +27,7 @@ int main() {
     pthread_t thread;
     int status;
     int status_addr;
-    FILE *f = fopen("", "w+");
+    FILE *f = fopen("/home/box/main.pid", "w+");
     check((int) f, "file");
     fprintf("%d\n", getpid());
  
