@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-void check(int toCheck, char* msg) {
+void check(int toCheck, const char* msg) {
 	if (toCheck == -1) {
 		printf("%s\n", msg);
 		printf("%s\n", strerror(errno));
@@ -29,7 +29,7 @@ int main() {
     int status;
     int status_addr;
     FILE *f = fopen("/home/box/main.pid", "w+");
-    check((int) f, "file");
+    // check((int) f, "file");
     fprintf("%d\n", getpid());
  
     status = pthread_create(&thread, NULL, helloWorld, NULL);
@@ -40,6 +40,7 @@ int main() {
     check(status, "create");
  
     printf("joined with address %d\n", status_addr);
-    _getch();
+    int i;
+    cin >> i;
     return 0;
 }
