@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <iostream>
 
 void check(int toCheck, const char* msg) {
 	if (toCheck == -1) {
@@ -30,7 +31,7 @@ int main() {
     int status_addr;
     FILE *f = fopen("/home/box/main.pid", "w+");
     // check((int) f, "file");
-    fprintf("%d\n", getpid());
+    fprintf(f, "%d\n", getpid());
  
     status = pthread_create(&thread, NULL, helloWorld, NULL);
     check(status, "create");
@@ -41,6 +42,6 @@ int main() {
  
     printf("joined with address %d\n", status_addr);
     int i;
-    cin >> i;
+    std::cin >> i;
     return 0;
 }
