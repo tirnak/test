@@ -30,7 +30,7 @@ void* wait_for_cond(void *args) {
 }
 void* wait_for_barrier(void *args) {
     printf("Hello from barrier!\n");
-    pthread_barrier_wait(&barrier);
+    pthread_barrier_wait(&thread_barrier);
 }
  
 int main() {
@@ -42,7 +42,7 @@ int main() {
     
     //cond_mutex = PTHREAD_MUTEX_INITIALIZER;
     //condition = PTHREAD_COND_INITIALIZER;
-    status = pthread_barrier_init(&barrier, NULL, 2);
+    status = pthread_barrier_init(&thread_barrier, NULL, 2);
     check(status, " create mutex thread");
     
     status = pthread_create(&thread_cond, NULL, &wait_for_cond, NULL);
