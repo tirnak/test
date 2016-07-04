@@ -22,8 +22,6 @@ void clearBuf(char* buf) {
 pthread_t thread_cond, thread_barrier;
 pthread_mutex_t cond_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
-pthread_barrier_t barrier = PTHREAD_BARRIER_INITIALIZER(2);
-
 
 void* wait_for_cond(void *args) {
     printf("Hello from cond!\n");
@@ -44,6 +42,8 @@ int main() {
     
     //cond_mutex = PTHREAD_MUTEX_INITIALIZER;
     //condition = PTHREAD_COND_INITIALIZER;
+    status = pthread_barrier_init(&barrier, NULL, 2);
+    check(status, " create mutex thread");
     
     status = pthread_create(&thread_cond, NULL, &wait_for_cond, NULL);
     check(status, " create mutex thread");
