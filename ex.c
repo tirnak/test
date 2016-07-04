@@ -19,66 +19,38 @@ void clearBuf(char* buf) {
 	memset(buf, 0, sizeof(buf));
 }
 
-pthread_mutex_t mutexL;
-pthread_spinlock_t spinlockL;
-pthread_rwlock_t rwlockL;
+pthread_t thread_cond, thread_barrier;
+pthread_mutex_t cond_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
+pthread_barrier_t barrier = PTHREAD_BARRIER_INITIALIZER;
 
-void* mutexTh(void *args) {
-    printf("Hello from mutex!\n");
-    pthread_mutex_lock(&mutexL);
+
+void* wait_for_cond(void *args) {
+    printf("Hello from cond!\n");
+    pthread_mutex_lock(&cond_mutex);
+    pthread_cond_wait(&condition, &cond_mutex);
 }
-
-void* spinTh(void *args) {
-    printf("Hello from spinlock!\n");
-    pthread_spin_lock(&spinlockL);
-}
-
-void* readTh(void *args) {
-    printf("Hello from read!\n");
-    pthread_rwlock_rdlock(&rwlockL);
-}
-
-void* writeTh(void *args) {
-    printf("Hello from write!\n");
-    pthread_rwlock_wrlock(&rwlockL);
+void* wait_for_barrier(void *args) {
+    printf("Hello from barrier!\n");
+    pthread_barrier_wait(&barrier);
 }
  
 int main() {
-    pthread_t threadMutex,threadSpin,threadR,threadW;
     
     int status;
     FILE *f = fopen("/home/box/main.pid", "w+");
     // check((int) f, "file");
     fprintf(f, "%d\n", getpid());
     
-    status = pthread_mutex_init(&mutexL, NULL);
-    check(status, "mutex init");
-    pthread_mutex_lock(&mutexL);
+    //cond_mutex = PTHREAD_MUTEX_INITIALIZER;
+    //condition = PTHREAD_COND_INITIALIZER;
     
-    status = pthread_spin_init(&spinlockL, PTHREAD_PROCESS_SHARED); 
-    check(status, "spinlock init");
-    pthread_spin_lock(&spinlockL);
-    
-    status = pthread_rwlock_init(&rwlockL, NULL);
-    check(status, "rwlock init");
-    status = pthread_rwlock_rdlock(&rwlockL);
-    check(status, "rwlock read lock");
-    status = pthread_rwlock_wrlock(&rwlockL);
-    check(status, "rwlock write lock");
-
-    
-    status = pthread_create(&threadMutex, NULL, &mutexTh, NULL);
+    status = pthread_create(&thread_cond, NULL, &wait_for_cond, NULL);
     check(status, " create mutex thread");
     
-    status = pthread_create(&threadSpin, NULL, &spinTh, NULL);
+    status = pthread_create(&thread_barrier, NULL, &wait_for_barrier, NULL);
     check(status, " create spin thread");
  
-    status = pthread_create(&threadR, NULL, readTh, NULL);
-    check(status, "create read");
- 
-    status = pthread_create(&threadW, NULL, writeTh, NULL);
-    check(status, "create write");
-    
     printf("Hello from main!\n");
  
     int i;
