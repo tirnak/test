@@ -22,7 +22,7 @@ void clearBuf(char* buf) {
 pthread_t thread_cond, thread_barrier;
 pthread_mutex_t cond_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
-pthread_barrier_t barrier = PTHREAD_BARRIER_INITIALIZER;
+pthread_barrier_t barrier = PTHREAD_BARRIER_INITIALIZER(2);
 
 
 void* wait_for_cond(void *args) {
