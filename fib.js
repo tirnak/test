@@ -1,6 +1,6 @@
 #!/usr/bin/env jjs
-var x1 = 7;
-print("Hi, username!");
+var num = 7;
+print("Hello, username!");
 
 function fibonaci(x) {
 	if (x == 1) {
@@ -12,4 +12,4 @@ function fibonaci(x) {
 	return fibonaci(x - 1) + fibonaci(x - 2);
 }
 
-print(fibonaci(x1));
+print(fibonaci(num));
