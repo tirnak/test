@@ -1,6 +1,6 @@
 #!/usr/bin/env jjs
-var x1 = 7;
-print("Hi, username!");
+var x1 = $ARG[0];
+print("Hi, " + $ENV.USER);
 
 function fibonaci(x) {
 	if (x == 1) {
