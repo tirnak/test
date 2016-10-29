@@ -3,13 +3,13 @@ var num = 7;
 print("Hello, username!");
 
 function fibonaci(x) {
-	if (x == 1) {
-		return 1;
+	function _fib(n, a, b) {
+		if (n == 0) {
+			return a;
+		}
+		return (n - 1, b, a + b);
 	}
-	if (x < 0) {
-		return 0;
-	}
-	return fibonaci(x - 1) + fibonaci(x - 2);
+	return _fib(x, 0, 1);
 }
 
 print(fibonaci(num));
